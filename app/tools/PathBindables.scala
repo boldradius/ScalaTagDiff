@@ -14,13 +14,6 @@ import controllers.{BrowserEventTypes, BrowserGetEvent,BrowserPostEvent}
 
 object PathBindables {
 
-//  def jsonPathBindable[A](implicit format: Format[A]): PathBindable[A] = new PathBindable[A] {
-//    def bind(key: String, value: String) =
-//      implicitly[PathBindable[String]].bind(key, value).right.map(s => J.fromJson[A](J.parse(decode(s, "UTF-8"))).asEither.left.map(_.toString)).joinRight
-//    def unbind(key: String, value: A) = implicitly[PathBindable[String]].unbind(key, encode(J.stringify(J.toJson(value)), "UTF-8"))
-//  }
-
-
   implicit def getRoutePathGetEventBinder(implicit stringBinder: PathBindable[String]) = new PathBindable[BrowserGetEvent] {
     override def bind(key: String, value: String): Either[String, BrowserGetEvent] =
        stringBinder.bind(key, value).right.map(s => J.fromJson[BrowserGetEvent](J.parse(decode(s, "UTF-8"))).asEither.left.map(_.toString)).joinRight
