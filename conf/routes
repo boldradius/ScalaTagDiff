@@ -1,0 +1,17 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           controllers.Application.index
+
+GET    /browserGetEvent/:event                    controllers.Application.browserGetEvent(event:controllers.BrowserGetEvent)
+POST   /browserPostEvent                          controllers.Application.browserPostEvent
+
+# Map Bootstrap images
+GET    /assets/stylesheets/bootstrap/glyphicons-halflings.png         controllers.Assets.at(path="/public", file="/images/glyphicons-halflings.png")
+GET    /assets/stylesheets/bootstrap/glyphicons-halflings-white.png   controllers.Assets.at(path="/public", file="/images/glyphicons-halflings-white.png")
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)

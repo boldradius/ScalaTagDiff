@@ -1,0 +1,15 @@
+.bordered{
+border: 1px solid black;
+padding:5px;
+}
+.jumbotron h1 {
+font-size: 33px;
+}
+.container .jumbotron {
+padding-right: 20px;
+padding-left: 20px;
+}
+.jumbotron {
+padding-top: 18px;
+padding-bottom: 18px;
+}
