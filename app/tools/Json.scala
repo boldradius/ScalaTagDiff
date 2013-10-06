@@ -5,6 +5,9 @@ import play.api.libs.json.Json._
 import play.api.libs.json.Writes
 import play.api.libs.json.Reads
 
+/**
+ * @author Patrick Premont  patrick@tindr.ca
+ */
 object Json {
   implicit def tuple2Writes[A,B](implicit a: Writes[A], b:Writes[B]) = new Writes[(A, B)] {
     def writes(t: (A, B)) = play.api.libs.json.Json.arr(t._1, t._2)

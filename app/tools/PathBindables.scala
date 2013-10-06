@@ -11,6 +11,9 @@ import java.lang.String
 import controllers.BrowserEvents._
 import controllers.{BrowserEventTypes, BrowserGetEvent,BrowserPostEvent}
 
+/**
+ * @author Patrick Premont  patrick@tindr.ca
+ */
 
 object PathBindables {
 
