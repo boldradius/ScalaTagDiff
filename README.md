@@ -90,7 +90,9 @@ implicit def getRoutePathGetEventBinder(implicit stringBinder: PathBindable[Stri
 
 
 
-Created by Patrick Premont, Dave Sugden
+Created by Dave Sugden and Patrick Premont
+dave@tindr.ca
+patrick@tindr.ca
 
 
 
