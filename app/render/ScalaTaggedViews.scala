@@ -26,7 +26,7 @@ object ScalaTaggedViews {
   def main: HtmlTag =
     html(
       head(
-        title("TagDiff Demo"),
+        title("ScalaTagDiff Demo"),
         link.rel("stylesheet").attr("media" -> "screen").href(routes.Assets.at("bootstrap/css/bootstrap.min.css")),
         link.rel("stylesheet").attr("media" -> "screen").href(routes.Assets.at("bootstrap/css/jumbotron-narrow.css")),
         link.rel("stylesheet").attr("media" -> "screen").href(routes.Assets.at("stylesheets/main.css")),
@@ -61,7 +61,7 @@ object ScalaTaggedViews {
             listItem
         }
       ),
-      h3.cls("text-muted")("TagDiff Demo")
+      h3.cls("text-muted")("ScalaTagDiff Demo")
     )
   }
 

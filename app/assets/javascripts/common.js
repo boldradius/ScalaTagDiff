@@ -16,7 +16,7 @@ require.config({
         jquery : '/assets/javascripts/jquery-1.10.2.min',
         underscore : '/assets/javascripts/underscore-min',
         backbone : '/assets/javascripts/backbone-min',
-        json2 : '/webjars/json2/20110223/json2.min',
+        json2 : '/assets/javascripts/json2',
         Bootstrap: '/assets/bootstrap/js/bootstrap.min'
     }
 });

@@ -4,6 +4,7 @@ import models.{UISession}
 import render.ScalaTaggedViews._
 import tags.Elements._
 import tags._
+import tools.Logging._
 
 
 object RenderElements {
