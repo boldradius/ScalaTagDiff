@@ -211,8 +211,8 @@ object Elements {
             if (attrDiff.isDefined || cssDiff.isDefined || classesDiff.isDefined || hasChildDiff ) {
               Right(Some(TagDiff(attrDiff,classesDiff, cssDiff, childrenDiff)))
             } else Right(None)
-          }else Left(toTag)
-        } else Left(toTag)
+          }else Left(toElement)
+        } else Left(toElement)
       }
       case _ => if (toHtml.toXML().toString == fromHtml.toXML().toString()) Right(None) else Left(toHtml)
     }
