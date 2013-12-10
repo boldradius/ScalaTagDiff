@@ -12,42 +12,58 @@ import scalaz.concurrent.MVar
 import scalaz.concurrent.MVar._
 import scalaz.effect.IO
 import scalaz.syntax.std.option._
+//import scalaz._
 import scala.Some
 import tags.Elements._
 import BrowserEvents._
 import render.ScalaTaggedViews._
 import play.api.templates.Html
 import controllers.BrowserEventTypes._
+import tools.Lenses._
+import UI._
 
 object Application extends Controller {
 
 
-  case class State(id: Long, ui: UISession) {
+  case class ClientSession(id: Long, ui: UISession) {
     lazy val rendering: Window = renderSession(ui)
   }
+
 
   case class Page(responseId: Long, page: Either[Window, WindowDiff])
 
   implicit lazy val WritePage = Json.writes[Page]
 
-  val updateUI: (String, Long, State => UISession) => JsValue = {
-    val states: MVar[Map[String, State]] = newMVar(Map.empty[String, State]).unsafePerformIO
+  /**
+   * (sessionIdString, clientStateCounter, ClientSession => UISession) => JsValue
+   */
+  lazy val updateUI: (String, Long, ClientSession => UISession) => JsValue = {
 
-    (sessionId, clientStateId, f) => {
-      sessionId.logDebug("sessionId " ++ _.toString)
-      val (newState, clientState) = states.modify(m => {
-        val startState = m.get(sessionId).getOrElse(State(1L, UISession()))
-        val clientState = (if (clientStateId == startState.id) Some(startState) else None)
-        val newState = (State(startState.id + 1, clientState.fold(startState.ui)(f)))
-        IO((m + (sessionId -> newState), (newState, clientState)))
-      }).unsafePerformIO
+    // this is evaluated only once, the first time, to create an empty map
+    lazy val states: MVar[Map[String, ClientSession]] = newMVar(Map.empty[String, ClientSession]).unsafePerformIO()
 
-      val page = newState.rendering
+
+    ( sessionId, clientStateId, f ) => {
+      val ( newState, clientState ) = states.modify{ sessionMap =>
+
+        // get current ClientSession for this request, create new one if necessary
+        val startState = sessionMap.get(sessionId).getOrElse(ClientSession(1L, UISession()))
+
+        // check the  clientStateId, if it is in sync, we're good, otherwise render from scratch
+        val currentClientState = if (clientStateId == startState.id) Some(startState) else None
+
+        // apply ClientSession => UISession or render from scratch
+        val updatedState = ClientSession(startState.id + 1, currentClientState.fold(startState.ui)(f))
+
+        // Side effect
+        IO((sessionMap + (sessionId -> updatedState), (updatedState, currentClientState)))
+      }.unsafePerformIO()
+
       Json.toJson(
         Page(
           newState.id,
+          // If the clientState is None, this is the first request, else its a diff
           clientState.cata(prev => Right(windowDiff(prev.rendering, newState.rendering)), Left(newState.rendering))))
-//        .logDebug(_.toString)
     }
 
   }
@@ -89,25 +105,24 @@ object Application extends Controller {
   }
 
 
-  def processBrowserGetEvent(event: Get): State => UISession = {
-    event.logDebug("processBrowserGetEvent " ++ _.toString)
-    s => event match {
+  def processBrowserGetEvent(event: Get): ClientSession => UISession = {
+    clientState => event match {
       case Get(et, id) => et match {
-        case LeafReplace => s.ui.copy(activeTab = TabLeafReplace)
-        case DOMReplace => s.ui.copy(activeTab = DeepDomDiff)
-        case About => s.ui.copy(activeTab = DeepDomDiff)
-        case OpenModal => s.ui.copy(modalVisible = true)
-        case CloseModal => s.ui.copy(modalVisible = false)
-        case FirstLeaf => s.ui.copy(leafDemo = FirstL)
-        case SecondLeaf => s.ui.copy(leafDemo = SecondL)
-        case FirstDeepDom => s.ui.copy(domDemo = FirstD)
-        case SecondDeepDom => s.ui.copy(domDemo = SecondD)
+        case LeafReplace => uiActiveTabLens.set( clientState )(TabLeafReplace).ui
+        case DOMReplace => clientState.ui.copy(activeTab = DeepDomDiff)
+        case About => clientState.ui.copy(activeTab = DeepDomDiff)
+        case OpenModal => clientState.ui.copy(modalVisible = true)
+        case CloseModal => clientState.ui.copy(modalVisible = false)
+        case FirstLeaf => clientState.ui.copy(leafDemo = FirstL)
+        case SecondLeaf => clientState.ui.copy(leafDemo = SecondL)
+        case FirstDeepDom => clientState.ui.copy(domDemo = FirstD)
+        case SecondDeepDom => clientState.ui.copy(domDemo = SecondD)
 
       }
     }
   }
 
-  def processBrowserPostEvent(event: Post): State => UISession = {
+  def processBrowserPostEvent(event: Post): ClientSession => UISession = {
     s => UISession()
   }
 

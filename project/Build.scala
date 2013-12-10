@@ -14,7 +14,8 @@ object ApplicationBuild extends Build {
     "org.scalaz" % "scalaz-core_2.10" % "7.0.0",
     "org.scalaz" % "scalaz-effect_2.10" % "7.0.0",
     "org.scalaz" % "scalaz-concurrent_2.10" % "7.0.0",
-    "org.webjars" % "requirejs" % "2.1.5"
+    "org.webjars" % "requirejs" % "2.1.5",
+    "com.chuusai" % "shapeless" % "2.0.0-M1" cross CrossVersion.full exclude("org.scala-stm", "scala-stm_2.10.0")
   )
 
 

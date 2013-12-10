@@ -18,7 +18,6 @@ object BrowserEvents {
 
   implicit val browserEventTypeReads = new Reads[BrowserEventType] {
     def reads(t: JsValue): JsResult[BrowserEventType] = {
-      t.logDebug(" browserEventTypeReads " ++ _.toString)
       t match {
         case JsString(s) => JsSuccess(BrowserEventTypes.withName(s))
         case _ => JsError("Invalid tuple")
